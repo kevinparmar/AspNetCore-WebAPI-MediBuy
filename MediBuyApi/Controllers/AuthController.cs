@@ -1,8 +1,11 @@
-﻿using MediBuyApi.Models.DTO;
+﻿using AutoMapper;
+using MediBuyApi.Data;
+using MediBuyApi.Models.DTO;
 using MediBuyApi.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediBuyApi.Controllers
 {
@@ -12,11 +15,15 @@ namespace MediBuyApi.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
+        private readonly MediBuyDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, MediBuyDbContext dbContext, IMapper mapper)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
+            this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         //POST: /api/Auth/Register
@@ -67,6 +74,7 @@ namespace MediBuyApi.Controllers
                         var jwtToken = tokenRepository.CreateJwtToken(user, roles.ToList());
                         var response = new LoginResponseDTO
                         {
+                            UserId = user.Id,
                             JwtToken = jwtToken,
                         };
 
@@ -75,6 +83,14 @@ namespace MediBuyApi.Controllers
                 }
             }
                 return BadRequest("Error logging in.");
+        }
+
+        [HttpGet]
+        public IActionResult GetUsers()
+        {
+            var users = dbContext.Users.ToList();
+            var usersDTO = mapper.Map<List<UserDTO>>(users);
+            return Ok(usersDTO);
         }
     }
 }

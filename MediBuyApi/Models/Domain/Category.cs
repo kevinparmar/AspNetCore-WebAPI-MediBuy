@@ -9,6 +9,6 @@ namespace MediBuyApi.Models.Domain
         public string CategoryName { get; set; }
 
         //Navigation Properties
-        public ICollection<Product> Product { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

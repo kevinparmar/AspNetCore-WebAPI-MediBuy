@@ -1,18 +1,22 @@
-﻿using MediBuyApi.Data;
+﻿using AutoMapper;
+using MediBuyApi.Data;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MediBuyApi.Repositories
 {
     public class ProductRepository : IProductRepository
     {
         private readonly MediBuyDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public ProductRepository(MediBuyDbContext dbContext)
+        public ProductRepository(MediBuyDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
-        public async Task<List<Product>> GetAllAsync(
+        public async Task<List<ProductDTO>> GetAllAsync(
             string? nameFilter,
             string? descriptionFilter,
             string? sellerFilter,
@@ -23,11 +27,11 @@ namespace MediBuyApi.Repositories
             int pageNumber = 1,
             int pageSize = 1000)
         {
-            var products = dbContext.Products.AsQueryable();
+            var products = dbContext.Products.Include(p => p.Category).AsQueryable();
 
             //Filter by Name
 
-            if(!string.IsNullOrEmpty(nameFilter))
+            if (!string.IsNullOrEmpty(nameFilter))
             {
                 products = products.Where(p => p.Name.Contains(nameFilter));
             }
@@ -68,25 +72,31 @@ namespace MediBuyApi.Repositories
                 
                 if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
-                    products = isAscending ? products.OrderBy(x => x.Name) : products.OrderByDescending(x => x.Name);
+                    products = isAscending ? products.OrderBy(p => p.Name) : products.OrderByDescending(p => p.Name);
                 }
 
                 //Sort by price 
 
                 else if (sortBy.Equals("Price", StringComparison.OrdinalIgnoreCase))
                 {
-                    products = isAscending ? products.OrderBy(x => x.Price) : products.OrderByDescending(x => x.Price);
+                    products = isAscending ? products.OrderBy(p => p.Price) : products.OrderByDescending(p => p.Price);
                 }
             }
 
             var skipResults = (pageNumber - 1) * pageSize;
 
-            return await products.Skip(skipResults).Take(pageSize).ToListAsync();
+            //return await products.Skip(skipResults).Take(pageSize).ToListAsync();
+            var productsList = products.Skip(skipResults).Take(pageSize).ToList(); // Materialize the data
+
+            var productsDTO = mapper.Map<List<ProductDTO>>(productsList);
+            return productsDTO;
         }
 
-        public async Task<Product> GetByIdAsync(int id)
+        public async Task<ProductDTO> GetByIdAsync(int id)
         {
-            return await dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var product = await dbContext.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+            var productDTO = mapper.Map<ProductDTO>(product);
+            return productDTO;
         }
 
         public async Task<Product> CreateAsync(Product product)

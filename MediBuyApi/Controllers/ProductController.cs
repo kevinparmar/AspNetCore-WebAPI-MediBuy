@@ -23,18 +23,18 @@ namespace MediBuyApi.Controllers
 
         [HttpGet]
         public async Task<ActionResult> GetAll(
-            [FromQuery] string nameFilter,
-            [FromQuery] string descriptionFilter,
-            [FromQuery] string sellerFilter,
-            [FromQuery] int lessThanPrice,
-            [FromQuery] int greaterThanPrice,
-            [FromQuery] string sortBy,
-            [FromQuery] bool isAscending,
+            [FromQuery] string? nameFilter,
+            [FromQuery] string? descriptionFilter,
+            [FromQuery] string? sellerFilter,
+            [FromQuery] int? lessThanPrice,
+            [FromQuery] int? greaterThanPrice,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool isAscending = true,
             [FromQuery] int pageNumber = 1, 
             [FromQuery] int pageSize = 1000)
         {
 
-            var productDomain = await productRepository.GetAllAsync(nameFilter,
+            var productDTO = await productRepository.GetAllAsync(nameFilter,
                                                                     descriptionFilter,
                                                                     sellerFilter,
                                                                     lessThanPrice,
@@ -44,26 +44,27 @@ namespace MediBuyApi.Controllers
                                                                     pageNumber,
                                                                     pageSize);
 
-            if(productDomain.Count == 0)
+            if(productDTO.Count == 0)
             {
                 return NotFound(new { Message = "No products found with selected filters" });
             }
 
-            return Ok(mapper.Map<List<ProductDTO>>(productDomain));
+            //return Ok(mapper.Map<List<ProductDTO>>(productDomain));
+            return Ok(productDTO);
         }
 
         [HttpGet]
         [Route("{Id:int}")]
         public async Task<IActionResult> GetById(int Id)
         {
-            var productDomain = await productRepository.GetByIdAsync(Id);
+            var productDTO = await productRepository.GetByIdAsync(Id);
 
-            if( productDomain == null )
+            if( productDTO == null )
             {
                 return NotFound(new { Message = "Product not found with the specified Id" });
             }
 
-            return Ok(mapper.Map<ProductDTO>(productDomain));
+            return Ok(productDTO);
         }
 
         [HttpPost]

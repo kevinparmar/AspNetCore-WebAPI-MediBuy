@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MediBuyApi.Models.Domain;
 using MediBuyApi.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,21 +23,21 @@ namespace MediBuyApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categoryDomain = await categoryRepository.GetAllAsync();
-            return Ok(mapper.Map<List<CategoryDTO>>(categoryDomain));
+            var categoryDTO = await categoryRepository.GetAllAsync();
+            return Ok(categoryDTO);
         }
 
         [HttpGet]
         [Route("{Id:int}")]
-        public async Task<IActionResult> GetById([FromRoute]int Id) 
+        public async Task<IActionResult> GetById([FromRoute] int Id)
         {
-            var categoryDomain = await categoryRepository.GetByIdAsync(Id);
-            if(categoryDomain == null)
+            var categoryDTO = await categoryRepository.GetByIdAsync(Id);
+            if (categoryDTO == null)
             {
-                return NotFound(new {Message = "Category not found with the specified Id"});
+                return NotFound(new { Message = "Category not found with the specified Id" });
                 //throw new Exception("Category not found");
             }
-            return Ok(mapper.Map<CategoryDTO>(categoryDomain));
+            return Ok(categoryDTO);
         }
 
         [HttpPost]

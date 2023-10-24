@@ -12,15 +12,54 @@ namespace MediBuyApi.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Category>> GetAllAsync()
+        public async Task<List<CategoryDTO>> GetAllAsync()
         {
-            return await dbContext.Categories.ToListAsync();
+            var category = await dbContext.Categories
+                                          .Select(c => new CategoryDTO
+                                          {
+                                              Id = c.Id,
+                                              CategoryName = c.CategoryName,
+                                              Products = c.Products.Select(p => new ProductWithoutCategory
+                                              {
+                                                  Id = p.Id,
+                                                  Name = p.Name,
+                                                  Price = p.Price,
+                                                  Image = p.Image,
+                                                  Seller = p.Seller,
+                                                  Description = p.Description,
+                                                  Availability = p.Availability,
+                                                  CategoryId = p.CategoryId
+                                              }).ToList()
+                                              }).ToListAsync();
+
+            return category;
         }
 
-        public async Task<Category> GetByIdAsync(int id)
+        public async Task<CategoryDTO> GetByIdAsync(int id)
         {
-            return await dbContext.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            var categoryDTO = await dbContext.Categories
+                                             .Where(c => c.Id == id)
+                                             .Select(c => new CategoryDTO
+                                             {
+                                                 Id = c.Id,
+                                                 CategoryName = c.CategoryName,
+                                                 Products = c.Products.Select(p => new ProductWithoutCategory
+                                                 {
+                                                     Id = p.Id,
+                                                     Name = p.Name,
+                                                     Price = p.Price,
+                                                     Image = p.Image,
+                                                     Seller = p.Seller,
+                                                     Description = p.Description,
+                                                     Availability = p.Availability,
+                                                     CategoryId = p.CategoryId,
+                                                 }).ToList()
+                                             })
+                                             .FirstOrDefaultAsync();
+
+            return categoryDTO;
         }
+
 
         public async Task<Category> Create(Category category) 
         {

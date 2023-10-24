@@ -2,7 +2,7 @@
 {
     public interface IProductRepository
     {
-        Task<List<Product>> GetAllAsync(
+        Task<List<ProductDTO>> GetAllAsync(
             string? nameFilter,
             string? descriptionFilter,
             string? sellerFilter,
@@ -13,7 +13,7 @@
             int pageNumber = 1,
             int pageSize = 1000);
 
-        Task<Product> GetByIdAsync(int id);
+        Task<ProductDTO> GetByIdAsync(int id);
         Task<Product> CreateAsync(Product product);
         Task<Product> UpdateAsync(int id, Product product);
         Task<Product> DeleteAsync(int id);
