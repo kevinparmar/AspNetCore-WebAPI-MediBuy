@@ -1,4 +1,5 @@
 ﻿using MediBuyApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
@@ -16,6 +17,7 @@ namespace MediBuyApi.Controllers
             this.orderRepository = orderRepository;
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -27,6 +29,7 @@ namespace MediBuyApi.Controllers
             return Ok(ordersDTO);
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpPut]
         [Route("{Id:int}")]
         public async Task<IActionResult> StatusUpdate(int Id, [FromBody] StatusUpdateDTO statusUpdateDTO)

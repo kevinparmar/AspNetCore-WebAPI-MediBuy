@@ -210,6 +210,8 @@ namespace MediBuyApi.Repositories
                 var cart = await GetCart();
                 var cartDetails = dbContext.CartDetails.Where(cd => cd.CartId == cart.Id);
 
+                //var cartDetails = cart.CartDetails;
+
                 if (!cartDetails.Any())
                 {
                     // Handle an empty cart gracefully
@@ -220,7 +222,7 @@ namespace MediBuyApi.Repositories
                 {
                     UserId = userId,
                     CreateDate = DateTime.UtcNow,
-                    OrderStatusId = 2
+                    OrderStatusId = 1
                 };
 
                 dbContext.Orders.Add(order);
@@ -277,7 +279,9 @@ namespace MediBuyApi.Repositories
                 return user.Id;
             }
 
-            throw new Exception("User not logged in or incorrect token passed!");
+            //throw new Exception("User not logged in or incorrect token passed!");
+            httpContextAccessor.HttpContext.Response.StatusCode = 401; // Set the HTTP status code to 401
+            return "User not logged in or incorrect token passed!";
         }
     }
 }

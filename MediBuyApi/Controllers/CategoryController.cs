@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using MediBuyApi.CustomActionFilters;
 using MediBuyApi.Models.Domain;
 using MediBuyApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Drawing2D;
@@ -20,12 +22,14 @@ namespace MediBuyApi.Controllers
             this.mapper = mapper;
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var categoryDTO = await categoryRepository.GetAllAsync();
             return Ok(categoryDTO);
         }
+
 
         [HttpGet]
         [Route("{Id:int}")]
@@ -40,6 +44,8 @@ namespace MediBuyApi.Controllers
             return Ok(categoryDTO);
         }
 
+        [ValidateModel]
+        // [Authorize(Roles = "Writer")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EditCategoryDTO editCategoryDTO)
         {
@@ -52,6 +58,8 @@ namespace MediBuyApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = categoryDTO.Id }, categoryDTO);
         }
 
+        [ValidateModel]
+        [Authorize(Roles = "Writer")]
         [HttpPut]
         [Route("{Id:int}")]
         public async Task<IActionResult> Update(int Id, [FromBody] EditCategoryDTO editCategoryDTO)
@@ -67,6 +75,7 @@ namespace MediBuyApi.Controllers
             return Ok(mapper.Map<CategoryDTO>(categoryDomain)); 
         }
 
+        [Authorize(Roles = "Writer")]
         [HttpDelete]
         [Route("{Id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int Id)

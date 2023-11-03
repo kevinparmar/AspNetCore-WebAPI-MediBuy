@@ -1,4 +1,5 @@
 ﻿using MediBuyApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
@@ -16,6 +17,7 @@ namespace MediBuyApi.Controllers
             this.cartRepository = cartRepository;
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
@@ -33,7 +35,7 @@ namespace MediBuyApi.Controllers
             return Ok(cartDTO);
         }
 
-
+        [Authorize(Roles = "Reader")]
         [HttpPost]
         [Route("{Id:int}")]
         public async Task<IActionResult> AddItem(int Id)
@@ -48,6 +50,7 @@ namespace MediBuyApi.Controllers
             return Ok(cartDetailDTO);
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpDelete]
         [Route("{Id:int}")]
         public async Task<IActionResult> RemoveItem(int Id)
@@ -62,6 +65,7 @@ namespace MediBuyApi.Controllers
             return Ok(cartDetailDTO);
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpDelete("ClearCart")]
         public async Task<IActionResult> ClearCart()
         {
@@ -77,6 +81,7 @@ namespace MediBuyApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpGet]
         [Route("api/Cart/GetItemsCount")]
         public async Task<IActionResult> GetItemsCount()
@@ -85,6 +90,7 @@ namespace MediBuyApi.Controllers
             return Ok(new { Message = $"Total items in the cart: {count}" });
         }
 
+        [Authorize(Roles = "Reader")]
         [HttpGet]
         [Route("Checkout")]
         public async Task<IActionResult> Checkout()
@@ -107,4 +113,6 @@ namespace MediBuyApi.Controllers
             }
         }
     }
+
+
 }

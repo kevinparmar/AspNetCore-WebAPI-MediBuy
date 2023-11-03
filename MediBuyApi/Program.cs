@@ -12,6 +12,8 @@ using MediBuyApi.Controllers;
 using MediBuyApi.Mappings;
 using System.Text.Json.Serialization;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
@@ -24,8 +26,18 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-
 // Add services to the container.
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+});
+});
 
 builder.Services.AddControllers();
 
@@ -115,10 +127,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 

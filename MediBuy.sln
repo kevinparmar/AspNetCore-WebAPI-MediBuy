@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediBuyApi", "MediBuyApi\MediBuyApi.csproj", "{A799E30F-5D90-4714-975F-8CE9E36E33AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediBuyApi", "MediBuyApi\MediBuyApi.csproj", "{A799E30F-5D90-4714-975F-8CE9E36E33AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediBuyTest", "MediBuyTest\MediBuyTest.csproj", "{AF5F99DF-7154-44C6-BBB9-6E902FB3A1F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A799E30F-5D90-4714-975F-8CE9E36E33AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A799E30F-5D90-4714-975F-8CE9E36E33AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A799E30F-5D90-4714-975F-8CE9E36E33AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5F99DF-7154-44C6-BBB9-6E902FB3A1F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5F99DF-7154-44C6-BBB9-6E902FB3A1F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5F99DF-7154-44C6-BBB9-6E902FB3A1F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5F99DF-7154-44C6-BBB9-6E902FB3A1F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

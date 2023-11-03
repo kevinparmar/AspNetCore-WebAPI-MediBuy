@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using MediBuyApi.CustomActionFilters;
 using MediBuyApi.Models.DTO;
 using MediBuyApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
@@ -67,19 +69,23 @@ namespace MediBuyApi.Controllers
             return Ok(productDTO);
         }
 
+        [ValidateModel]
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProductDTO productDTO)
+        public async Task<IActionResult> Create([FromBody] EditProductDTO editProductDTO)
         {
-            var productDomain = mapper.Map<Product>(productDTO);
+            var productDomain = mapper.Map<Product>(editProductDTO);
 
             productDomain = await productRepository.CreateAsync(productDomain);
 
             return Ok(mapper.Map<ProductDTO>(productDomain));
         }
 
+        [ValidateModel]
+        [Authorize]
         [HttpPut]
         [Route("{Id:int}")]
-        public async Task<IActionResult> UpdateAsync([FromQuery] int Id, [FromBody] EditProductDTO editProductDTO)
+        public async Task<IActionResult> Update(int Id, [FromBody] EditProductDTO editProductDTO)
         {
             var productDomain = mapper.Map<Product>(editProductDTO);
 
@@ -93,9 +99,10 @@ namespace MediBuyApi.Controllers
             return Ok(mapper.Map<ProductDTO>(productDomain));
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{Id:int}")]
-        public async Task<IActionResult> Delete([FromQuery] int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             var productDomain = await productRepository.DeleteAsync(Id);
 

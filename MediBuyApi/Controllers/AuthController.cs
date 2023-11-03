@@ -2,6 +2,7 @@
 using MediBuyApi.Data;
 using MediBuyApi.Models.DTO;
 using MediBuyApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -41,19 +42,25 @@ namespace MediBuyApi.Controllers
 
             if (identityResult.Succeeded)
             {
-                if(registerRequestDTO.Roles != null && registerRequestDTO.Roles.Any())
+                if (registerRequestDTO.Roles != null && registerRequestDTO.Roles.Any())
                 {
                     identityResult = await userManager.AddToRolesAsync(identityUser, registerRequestDTO.Roles);
 
-                    if(identityResult.Succeeded)
+                    if (identityResult.Succeeded)
                     {
+                        // Return a 200 OK status code for a successful registration
                         return Ok("User Registered Successfully");
                     }
                 }
+
+                // If adding roles failed, return a 500 Internal Server Error
+                return StatusCode(500, "Failed to add roles to the user.");
             }
 
-            return BadRequest("Something went wrong :( . Couldn't register user!");
+            // If user creation failed, return a 400 Bad Request with error details
+            return BadRequest(identityResult.Errors);
         }
+
 
         //POST: /api/Auth/Login
         [HttpPost]
@@ -74,7 +81,9 @@ namespace MediBuyApi.Controllers
                         var jwtToken = tokenRepository.CreateJwtToken(user, roles.ToList());
                         var response = new LoginResponseDTO
                         {
+
                             UserId = user.Id,
+                            Roles = roles.ToList(),
                             JwtToken = jwtToken,
                         };
 
@@ -85,6 +94,7 @@ namespace MediBuyApi.Controllers
                 return BadRequest("Error logging in.");
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetUsers()
         {
